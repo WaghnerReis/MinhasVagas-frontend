@@ -2,18 +2,16 @@ import React, {ButtonHTMLAttributes} from 'react';
 
  import { Container } from './styles';
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>{
+  mode?: 'common' | 'cancel'
+}
 
 const Button: React.FC<ButtonProps> = ({children, ...props}) => {
-   
   return (
-      <Container
-        
-          {...props}
-          >
-
-{children}
-      </Container>
+    <Container
+      {...props}>
+        {children}
+    </Container>
   )
 }
 
