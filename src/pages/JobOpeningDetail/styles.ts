@@ -51,3 +51,11 @@ strong {
     font-size: 20px;
 }
 `
+
+export const Actions = styled.div`
+display: flex;
+
+button + button {
+    margin-left: 20px;
+}
+`

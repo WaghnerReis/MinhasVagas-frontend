@@ -11,6 +11,7 @@ a {
   display: block;
   text-decoration: none;
   transition: transform 0.2s;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
 
   display: flex;
   align-items: center;
