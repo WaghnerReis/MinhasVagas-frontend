@@ -20,12 +20,14 @@ useEffect(()=>{
 }, [fieldName, registerField])
 
   return (
-      <Container
-        ref={inputRef}
+    <Container>
+      <textarea ref={inputRef}
         defaultValue={defaultValue}
         rows={50}
-          {...props}
-         />
+        {...props}/>
+
+      <p>{error}</p>
+    </Container>
   )
 }
 
