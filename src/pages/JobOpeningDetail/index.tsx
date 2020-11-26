@@ -1,9 +1,14 @@
 import React from 'react';
 
+import { useHistory } from 'react-router-dom';
+
 import { Button } from "../../components";
 import { Container, Content, Actions } from './styles';
 
 const JobOpeningDetail: React.FC = () => {
+  const history = useHistory();
+  const handleEditJobOpeningClick = () => history.push('/CreateEditJobOpening');
+
   return (
     <>
       <Container>
@@ -22,7 +27,6 @@ const JobOpeningDetail: React.FC = () => {
               <p>15.000</p>
               <p>Sênior</p>
               <p>PJ</p>
-              <p>Aceita candidatos de outra cidade</p>
             </div>
           </div>
         </Content>
@@ -40,7 +44,7 @@ const JobOpeningDetail: React.FC = () => {
         <p>Seguro de Vida, Plano Odontológico, Plano de Saúde, Vale Transporte, Alimentação na empresa</p>
       </Container>
       <Actions>
-        <Button>Editar</Button>
+        <Button onClick={handleEditJobOpeningClick}>Editar</Button>
         <Button mode='cancel'>Excluir</Button>
       </Actions>
     </>
