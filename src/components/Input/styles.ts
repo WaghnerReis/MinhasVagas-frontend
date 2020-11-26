@@ -1,12 +1,19 @@
 import styled from 'styled-components';
 
-export const Container = styled.textarea`
-  width: 100%;
+export const Container = styled.div`
+  textarea {
+    width: 100%;
+    height: 40px;
+    font-size: 16px;
+    padding: 10px;
+    overflow: hidden;
 
-  height: 70px;
-  padding: 20px;
+    border-radius: 5px;
+    border:1px solid #064ce3;
+  }
 
-  border-radius: 5px;
-  border: 0;
-  font-size: 20px;
+  p {
+    color: red;
+    font-size: 16px;
+  }
 `;
