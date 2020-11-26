@@ -23,7 +23,7 @@ const buttonTypeVariations = {
 export const Container = styled.button<ButtonProps>`
   width: 100%;
 
-  height: 70px;
+  height: 60px;
   border-radius: 5px;
   border: 0;
   color: #fff;
