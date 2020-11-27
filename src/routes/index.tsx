@@ -9,8 +9,8 @@ import CreateEditJobOpening from "../pages/CreateEditJobOpening";
 export const Routes: React.FC = () =>(
     <Switch>
         <Route path='/' component={JobOpenings} exact/>
-        <Route path='/JobOpeningDetail' component={JobOpeningDetail} />
-        <Route path='/CreateEditJobOpening' component={CreateEditJobOpening} />
+        <Route path='/JobOpeningDetail/:id' component={JobOpeningDetail} />
+        <Route path='/CreateEditJobOpening/:id' component={CreateEditJobOpening} />
     </Switch>
 )
 
