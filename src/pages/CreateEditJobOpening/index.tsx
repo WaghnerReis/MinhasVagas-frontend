@@ -1,4 +1,9 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
+
+import { useQuery } from "@apollo/client";
+import {JOB_OPENING} from '../../graphql/jobOpenings'
+
+import {useRouteMatch, useHistory} from  'react-router-dom'
 
 import * as Yup from 'yup'
 import { getValidationErrors } from "../../util";
@@ -9,43 +14,13 @@ import { FormHandles } from "@unform/core";
 import { Button, Input } from '../../components';
 import { Container } from './styles';
 
-interface Company {
-  logo: string,
-  name: string,
-  address: string,
-  description: string,  
-  whatWeOffer: string,
+interface ParamsData {
+  id: string
 }
-
-interface JobOpening {
-  name: string,
-  nivel: string,
-  contract: string,
-  activitiesAndResponsibilities: string,
-  requirements: string,
-  remuneration: string,  
-  company: Company,  
-}
-
-const INITIAL_DATA: JobOpening = {
-  name: 'Desenvolvedor(a) Outsystems',
-  nivel: 'Sênior',
-  contract: 'PJ',
-  activitiesAndResponsibilities: 'Desenvolver novos produtos e serviços utilizando a tecnologia Outsystems. Pesquisar e identificar tecnologias e soluções oferecidas pelo mercado. Realizar manutenção evolutiva e corretiva de produtos e serviços existentes. Contatar fornecedores de equipamentos e softwares, esclarecendo dúvidas técnicas diversas, repassando necessidades, especificações e solicitando orçamentos. Monitorar o desempenho e a performance dos produtos e serviços desenvolvidos. Realizar reuniões de acompanhamento dos projetos, alinhando atividades realizadas x planejadas avaliando o cumprimento de etapas.',
-  requirements: 'Linguagem de Programação Outsystems, Lógica de Programação, HTML, CSS, JavaScript, WebService, Inglês Avançado, Banco de Dados, C#',
-  remuneration: '12.000',
-
-  company: {
-    logo: 'https://res.cloudinary.com/programathor/image/upload/c_fit,h_130,w_130/v1533232812/vpb1cvcuaryahzdhta5q.jpg',
-    name: 'Organização Verdemar LTDA',
-    address: 'Av. Nossa Senhora do Carmo, 1900, Sion',
-    description: 'Organização Verdemar LTDA',  
-    whatWeOffer: 'Seguro de Vida, Plano Odontológico, Plano de Saúde, Vale Transporte, Alimentação na empresa',
-    }
-  }
 
 const CreateEditJobOpening: React.FC = () => {
-const formRef = useRef<FormHandles>(null)
+const {params} = useRouteMatch<ParamsData>()
+  const formRef = useRef<FormHandles>(null)
 
 const handleSubmit = useCallback(async data => {
   try {
@@ -69,11 +44,37 @@ const handleSubmit = useCallback(async data => {
     await schema.validate(data, {
       abortEarly: false
     })
+
+    
 } catch (err) {
     const errors = getValidationErrors(err)
     formRef.current?.setErrors(errors)
   }
 }, [])
+
+  const { loading, data } = useQuery(JOB_OPENING, {variables: {
+    id: params.id
+  }});
+
+  if (loading) return <p>Loading...</p>;
+  
+
+let INITIAL_DATA = {
+  name: data?.jobOpening.name,
+    nivel: data?.jobOpening.nivel,
+    contract: data?.jobOpening.contract,
+    activitiesAndResponsibilities: data?.jobOpening.activitiesAndResponsibilities,
+    requirements: data?.jobOpening.requirements,
+    remuneration: data?.jobOpening.remuneration,
+  
+    company: {
+      logo: data?.jobOpening.company.logo,
+      name: data?.jobOpening.company.name,
+      address: data?.jobOpening.company.address,
+      description: data?.jobOpening.company.description,  
+      whatWeOffer: data?.jobOpening.company.whatWeOffer,
+      }
+}
 
 return (
   <Container>
