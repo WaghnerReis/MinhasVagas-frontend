@@ -3,17 +3,18 @@ import React, { createContext, useCallback, useContext } from 'react';
 import { JobOpening } from "../interfaces";
 
 import { useApolloClient, useMutation, useSubscription } from "@apollo/client";
-import {JOB_OPENINGS, JOB_OPENING, UPDATE_JOB_OPENING, CREATE_JOB_OPENING, DELETE_JOB_OPENING, JOB_OPENING_CREATED} from '../graphql/jobOpening'
+import {JOB_OPENINGS, JOB_OPENING, UPDATE_JOB_OPENING, CREATE_JOB_OPENING, DELETE_JOB_OPENING, JOB_OPENING_CREATED, JOB_OPENING_DELETED} from '../graphql/jobOpening'
 
 import { useCompany } from './company'
 
 interface JobOpeningContextData {
-    jobOpeningsRequest(): Promise<[JobOpening]>
+    jobOpeningsRequest(): Promise<JobOpening[]>
     jobOpeningRequest(id: string): Promise<JobOpening>
     updateJobOpeningRequest(jobOpeningId: string, companyId: string, data: JobOpening): void
     createJobOpeningRequest(data: JobOpening): void
     deleteJobOpeningRequest(data: JobOpening): void
     jobOpeningCreatedSubscription(): JobOpening
+    jobOpeningDeletedSubscription(): string
 }
 
 const JobOpeningContext = createContext<JobOpeningContextData>({} as JobOpeningContextData)
@@ -24,6 +25,7 @@ export const JobOpeningProvider: React.FC = ({children}) => {
   const createJobOpeningRequest = useMutation(CREATE_JOB_OPENING)
   const deleteJobOpeningRequest = useMutation(DELETE_JOB_OPENING)
   const jobOpeningCreatedSubscription = useSubscription(JOB_OPENING_CREATED)
+  const jobOpeningDeletedSubscription = useSubscription(JOB_OPENING_DELETED)
   
   const { updateCompanyRequest, createCompanyRequest, deleteCompanyRequest } = useCompany()
 
@@ -34,8 +36,6 @@ export const JobOpeningProvider: React.FC = ({children}) => {
       query: JOB_OPENINGS,
       fetchPolicy: "no-cache"
     });
-
-    console.log(jobOpenings)
 
     return jobOpenings
   }, [apolloClient])
@@ -86,13 +86,17 @@ export const JobOpeningProvider: React.FC = ({children}) => {
   const jobOpeningCreated = useCallback(() => {
     const { data } = jobOpeningCreatedSubscription
   
-    console.log(data?.jobOpeningCreated)
-
     return data?.jobOpeningCreated
   }, [jobOpeningCreatedSubscription])
  
+  const jobOpeningDeleted = useCallback(() => {
+    const { data } = jobOpeningDeletedSubscription
+  
+    return data?.jobOpeningDeleted
+  }, [jobOpeningDeletedSubscription])
+ 
     return (
-      <JobOpeningContext.Provider value={{jobOpeningsRequest: jobOpenings, jobOpeningRequest: jobOpening, updateJobOpeningRequest: updateJobOpening, createJobOpeningRequest: createJobOpening, deleteJobOpeningRequest: deleteJobOpening, jobOpeningCreatedSubscription: jobOpeningCreated}}>
+      <JobOpeningContext.Provider value={{jobOpeningsRequest: jobOpenings, jobOpeningRequest: jobOpening, updateJobOpeningRequest: updateJobOpening, createJobOpeningRequest: createJobOpening, deleteJobOpeningRequest: deleteJobOpening, jobOpeningCreatedSubscription: jobOpeningCreated, jobOpeningDeletedSubscription: jobOpeningDeleted}}>
         {children}
       </JobOpeningContext.Provider>
   )
