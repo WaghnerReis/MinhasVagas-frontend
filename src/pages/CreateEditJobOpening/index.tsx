@@ -73,14 +73,14 @@ const CreateEditJobOpening: React.FC = () => {
       }else{
         createJobOpeningRequest(data)
 
-        history.push('/')
+        setTimeout(()=> history.push('/'), 500)
       }
       
   } catch (err) {
       const errors = getValidationErrors(err)
       formRef.current?.setErrors(errors)
     }
-  }, [history, isEdit, jobOpening._id, updateJobOpeningRequest])
+  }, [createJobOpeningRequest, history, isEdit, jobOpening._id, updateJobOpeningRequest])
 
   let INITIAL_DATA: JobOpening = {
       _id: jobOpening?._id,

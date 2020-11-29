@@ -18,7 +18,7 @@ const JobOpenings: React.FC = () => {
         history.push('/CreateEditJobOpening/_');
     }, [history])
 
-    const { jobOpeningsRequest } = useJobOpening()
+    const { jobOpeningsRequest, jobOpeningCreatedSubscription } = useJobOpening()
 
     useEffect(()=> {
         async function getJobOpenings(){

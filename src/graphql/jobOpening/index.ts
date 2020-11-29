@@ -70,3 +70,21 @@ mutation ($id: ID!){
   deleteJobOpening(id: $id)
 } 
 `
+
+export const JOB_OPENING_CREATED = gql` 
+subscription {
+  jobOpeningCreated{
+    _id
+    name
+    remuneration
+    nivel
+    contract
+    company {
+      _id
+      logo
+      name
+      address
+    }
+  }
+}
+`

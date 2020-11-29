@@ -2,8 +2,8 @@ import React, { createContext, useCallback, useContext } from 'react';
 
 import { JobOpening } from "../interfaces";
 
-import { useApolloClient, useMutation } from "@apollo/client";
-import {JOB_OPENINGS, JOB_OPENING, UPDATE_JOB_OPENING, CREATE_JOB_OPENING, DELETE_JOB_OPENING} from '../graphql/jobOpening'
+import { useApolloClient, useMutation, useSubscription } from "@apollo/client";
+import {JOB_OPENINGS, JOB_OPENING, UPDATE_JOB_OPENING, CREATE_JOB_OPENING, DELETE_JOB_OPENING, JOB_OPENING_CREATED} from '../graphql/jobOpening'
 
 import { useCompany } from './company'
 
@@ -13,6 +13,7 @@ interface JobOpeningContextData {
     updateJobOpeningRequest(id: string, data: JobOpening): void
     createJobOpeningRequest(data: JobOpening): void
     deleteJobOpeningRequest(data: JobOpening): void
+    jobOpeningCreatedSubscription(): JobOpening
 }
 
 const JobOpeningContext = createContext<JobOpeningContextData>({} as JobOpeningContextData)
@@ -22,29 +23,31 @@ export const JobOpeningProvider: React.FC = ({children}) => {
   const updateJobOpeningRequest = useMutation(UPDATE_JOB_OPENING)
   const createJobOpeningRequest = useMutation(CREATE_JOB_OPENING)
   const deleteJobOpeningRequest = useMutation(DELETE_JOB_OPENING)
+  const jobOpeningCreatedSubscription = useSubscription(JOB_OPENING_CREATED)
   
   const { updateCompanyRequest, createCompanyRequest, deleteCompanyRequest } = useCompany()
 
   const jobOpenings = useCallback(async () => {
     await apolloClient.resetStore()
     
-    const { data } = await apolloClient.query({
+    const { data: { jobOpenings } } = await apolloClient.query({
       query: JOB_OPENINGS,
+      fetchPolicy: "no-cache"
     });
 
-    const jobOpenings = data ? data.jobOpenings : null;
+    console.log(jobOpenings)
+
     return jobOpenings
   }, [apolloClient])
     
   const jobOpening = useCallback(async (id: string)=>{
     await apolloClient.resetStore()
     
-    const { data } = await apolloClient.query({
+    const { data: { jobOpening } } = await apolloClient.query({
       query: JOB_OPENING,
       variables: { id }
     });
 
-    const jobOpening = data ? data.jobOpening : null;
     return jobOpening
   }, [apolloClient])
     
@@ -82,8 +85,16 @@ export const JobOpeningProvider: React.FC = ({children}) => {
     deleteJobOpeningMutation({variables: {id: data._id}})
    }, [deleteCompanyRequest, deleteJobOpeningRequest])
  
+  const jobOpeningCreated = useCallback(() => {
+    const { data } = jobOpeningCreatedSubscription
+  
+    console.log(data?.jobOpeningCreated)
+
+    return data?.jobOpeningCreated
+  }, [jobOpeningCreatedSubscription])
+ 
     return (
-      <JobOpeningContext.Provider value={{jobOpeningsRequest: jobOpenings, jobOpeningRequest: jobOpening, updateJobOpeningRequest: updateJobOpening, createJobOpeningRequest: createJobOpening, deleteJobOpeningRequest: deleteJobOpening}}>
+      <JobOpeningContext.Provider value={{jobOpeningsRequest: jobOpenings, jobOpeningRequest: jobOpening, updateJobOpeningRequest: updateJobOpening, createJobOpeningRequest: createJobOpening, deleteJobOpeningRequest: deleteJobOpening, jobOpeningCreatedSubscription: jobOpeningCreated}}>
         {children}
       </JobOpeningContext.Provider>
   )
