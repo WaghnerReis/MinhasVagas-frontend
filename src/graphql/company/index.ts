@@ -31,11 +31,18 @@ mutation ($id: ID!, $data: CompanyInput!){
   }
 } 
 `
+
 export const CREATE_COMPANY = gql` 
 mutation ($data: CompanyInput!){
   createCompany(data:$data)
   {
     _id
   }
+} 
+`
+
+export const DELETE_COMPANY = gql` 
+mutation ($id: ID!){
+  deleteCompany(id: $id)
 } 
 `

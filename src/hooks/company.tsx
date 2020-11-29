@@ -3,13 +3,14 @@ import React, { createContext, useCallback, useContext } from 'react';
 import { Company } from "../interfaces";
 
 import { useQuery, useMutation, useApolloClient } from "@apollo/client";
-import {COMPANIES, COMPANY, CREATE_COMPANY, UPDATE_COMPANY} from '../graphql/company'
+import {COMPANIES, COMPANY, CREATE_COMPANY, DELETE_COMPANY, UPDATE_COMPANY} from '../graphql/company'
 
 interface CompanyContextData {
     companiesRequest(): [Company]
     companyRequest(id: string): Promise<Company>
     updateCompanyRequest(id: string, data: Company): void
     createCompanyRequest(data: Company): Promise<number>
+    deleteCompanyRequest(id: string): void
 }
 
 const CompanyContext = createContext<CompanyContextData>({} as CompanyContextData)
@@ -18,6 +19,7 @@ export const CompanyProvider: React.FC = ({children}) => {
   const companiesRequest = useQuery(COMPANIES)  
   const apolloClient = useApolloClient()  
   const updateCompanyRequest = useMutation(UPDATE_COMPANY)  
+  const deleteCompanyRequest = useMutation(DELETE_COMPANY)  
 
   const companies = useCallback(()=>{
     const { loading, data } = companiesRequest
@@ -50,8 +52,13 @@ export const CompanyProvider: React.FC = ({children}) => {
     return data.createCompany._id
   }, [apolloClient])
 
+  const deleteCompany = useCallback((id: string)=> {
+    const [deleteCompanyMutation] = deleteCompanyRequest
+    deleteCompanyMutation({variables: {id}})
+  }, [deleteCompanyRequest])
+
     return (
-      <CompanyContext.Provider value={{companiesRequest: companies, companyRequest: company, updateCompanyRequest: updateCompany, createCompanyRequest: createCompany}}>
+      <CompanyContext.Provider value={{companiesRequest: companies, companyRequest: company, updateCompanyRequest: updateCompany, createCompanyRequest: createCompany, deleteCompanyRequest: deleteCompany}}>
         {children}
       </CompanyContext.Provider>
   )

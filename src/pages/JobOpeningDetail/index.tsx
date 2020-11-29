@@ -23,19 +23,25 @@ const JobOpeningDetail: React.FC = () => {
   const {params} = useRouteMatch<ParamsData>()
   const history = useHistory<History>();
 
+  const { jobOpeningRequest, deleteJobOpeningRequest } = useJobOpening()
+
+  useEffect(()=> {
+    async function getJobOpeningByID(){
+     const jobOpening = await jobOpeningRequest(params.id)
+     setJobOpening(jobOpening)
+   }
+   getJobOpeningByID()
+ }, [jobOpeningRequest, params.id, history.location.key])
+
   const handleEditJobOpeningClick = useCallback(()=>{
     history.push(`/CreateEditJobOpening/${params.id}`);
   }, [history, params.id])
 
-  const { jobOpeningRequest } = useJobOpening()
+  const handlerDeleteJobOpeningClick = useCallback(() => {
+    deleteJobOpeningRequest(jobOpening)
 
-  useEffect(()=> {
-     async function getJobOpeningByID(){
-      const jobOpening = await jobOpeningRequest(params.id)
-      setJobOpening(jobOpening)
-    }
-    getJobOpeningByID()
-  }, [jobOpeningRequest, params.id, history.location.key])
+    history.push('/')
+  }, [deleteJobOpeningRequest, history, jobOpening])
 
   return (
     <>
@@ -75,7 +81,7 @@ const JobOpeningDetail: React.FC = () => {
       </Container>
       <Actions>
         <Button onClick={handleEditJobOpeningClick}>Editar</Button>
-        <Button mode='cancel'>Excluir</Button>
+        <Button mode='cancel' onClick={handlerDeleteJobOpeningClick}>Excluir</Button>
       </Actions>
       </>
       : <p>Loading...</p>

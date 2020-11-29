@@ -52,6 +52,7 @@ mutation ($id: ID!, $data: JobOpeningInput!){
   }
 } 
 `
+
 export const CREATE_JOB_OPENING = gql` 
 mutation ($data: JobOpeningInput!){
   createJobOpening(data:$data)
@@ -61,5 +62,11 @@ mutation ($data: JobOpeningInput!){
       name
     }
   }
+} 
+`
+
+export const DELETE_JOB_OPENING = gql` 
+mutation ($id: ID!){
+  deleteJobOpening(id: $id)
 } 
 `

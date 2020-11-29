@@ -20,10 +20,13 @@ const JobOpenings: React.FC = () => {
 
     const { jobOpeningsRequest } = useJobOpening()
 
-    useEffect(()=>{
-        const jobOpenings = jobOpeningsRequest()
-        setJobOpenings(jobOpenings)
-    }, [history.location.key, jobOpeningsRequest])
+    useEffect(()=> {
+        async function getJobOpenings(){
+         const jobOpenings = await jobOpeningsRequest()
+         setJobOpenings(jobOpenings)
+       }
+       getJobOpenings()
+     }, [jobOpeningsRequest, history.location.key])
 
     const jobOpeningsSection = (jobOpenings: [JobOpening]) => (
     jobOpenings.length > 0 ?
