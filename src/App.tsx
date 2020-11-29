@@ -1,5 +1,7 @@
 import React from 'react';
 
+import AppProvider from "./hooks";
+
 import { ApolloProvider } from '@apollo/client';
 import api from './services/api'
 
@@ -10,10 +12,12 @@ import GlobalStyle from './styles/globals'
 
 const App: React.FC = () => (
   <ApolloProvider client={api}>
-    <BrowserRouter>
-    <Routes/>
-  <GlobalStyle/>
-  </BrowserRouter>
+      <BrowserRouter>
+        <AppProvider>
+          <Routes/>
+        </AppProvider>
+      <GlobalStyle/>
+    </BrowserRouter>
   </ApolloProvider>
   )
 

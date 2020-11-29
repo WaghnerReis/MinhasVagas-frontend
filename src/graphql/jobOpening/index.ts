@@ -1,15 +1,5 @@
 import { gql } from '@apollo/client';
 
-type JobOpening = {
-  name: string,
-  nivel: string,
-  contract: string,
-  activitiesAndResponsibilities: string,
-  requirements: string,
-  remuneration: string,
-  company: string
-}
-
 export const JOB_OPENINGS = gql`
 query {
   jobOpenings{
@@ -19,6 +9,7 @@ query {
     nivel
     contract
     company {
+      _id
       logo
       name
       address
@@ -26,6 +17,7 @@ query {
   }
 }
 `
+
 export const JOB_OPENING = gql` 
 query ($id: ID!) {
   jobOpening(id: $id) {
@@ -38,6 +30,7 @@ query ($id: ID!) {
     requirements
     
     company {
+      _id
       name
       address
       logo
@@ -47,12 +40,24 @@ query ($id: ID!) {
   }
 }
 `
+
 export const UPDATE_JOB_OPENING = gql` 
-mutation ($id: ID!, $data: JobOpening!){
+mutation ($id: ID!, $data: JobOpeningInput!){
   updateJobOpening(id: $id, data:$data)
   {
     name
-    company{
+    company {
+      name
+    }
+  }
+} 
+`
+export const CREATE_JOB_OPENING = gql` 
+mutation ($data: JobOpeningInput!){
+  createJobOpening(data:$data)
+  {
+    name
+    company {
       name
     }
   }
