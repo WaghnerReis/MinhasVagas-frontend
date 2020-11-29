@@ -3,7 +3,7 @@ import React from 'react';
 import AppProvider from "./hooks";
 
 import { ApolloProvider } from '@apollo/client';
-import api from './services/api'
+import client from './services/client'
 
 import { Routes } from "./routes";
 import {BrowserRouter} from 'react-router-dom'
@@ -11,7 +11,7 @@ import {BrowserRouter} from 'react-router-dom'
 import GlobalStyle from './styles/globals'
 
 const App: React.FC = () => (
-  <ApolloProvider client={api}>
+  <ApolloProvider client={client}>
       <BrowserRouter>
         <AppProvider>
           <Routes/>
