@@ -44,6 +44,8 @@ const CreateEditJobOpening: React.FC = () => {
 
   const handleSubmit = useCallback(async (data: JobOpening) => {
     try {
+      formRef.current?.setErrors({})
+
       const schema = Yup.object().shape({
         name: Yup.string().required('Informe o nome da vaga (Ex.: Desenvolvedor Frontend)'),
         nivel: Yup.string().required('Informe o nível (Ex.: Sênior)'),
@@ -66,11 +68,10 @@ const CreateEditJobOpening: React.FC = () => {
       })
 
       if(isEdit){
-        data.company._id = jobOpening.company._id
-        updateJobOpeningRequest(jobOpening._id, data)
+        updateJobOpeningRequest(jobOpening._id, jobOpening.company._id, data)
         
         history.push(`/JobOpeningDetail/${jobOpening._id}`)
-      }else{
+      } else {
         createJobOpeningRequest(data)
 
         setTimeout(()=> history.push('/'), 500)
@@ -80,7 +81,8 @@ const CreateEditJobOpening: React.FC = () => {
       const errors = getValidationErrors(err)
       formRef.current?.setErrors(errors)
     }
-  }, [createJobOpeningRequest, history, isEdit, jobOpening._id, updateJobOpeningRequest])
+
+  }, [createJobOpeningRequest, history, isEdit, jobOpening, updateJobOpeningRequest])
 
   let INITIAL_DATA: JobOpening = {
       _id: jobOpening?._id,
