@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { useQuery } from "@apollo/client";
-import {JOB_OPENINGS} from '../../graphql/jobOpenings'
+import { JobOpening } from "../../interfaces";
+
+import { useJobOpening } from "../../hooks/jobOpening";
 
 import {Link, useHistory} from 'react-router-dom'
 
@@ -9,27 +10,29 @@ import { JobOpeningsList, Content } from './styles';
 import {Button} from '../../components'
 
 const JobOpenings: React.FC = () => {
+  const [jobOpenings, setJobOpenings] = useState<[JobOpening]>()
+
     const history = useHistory();
-    const handleCreateJobOpeningClick = () => history.push('/CreateEditJobOpening/_');
 
-    const { loading, error, data } = useQuery(JOB_OPENINGS);
+    const handleCreateJobOpeningClick = useCallback(()=>{
+        history.push('/CreateEditJobOpening/_');
+    }, [history])
 
-    if (loading) return <p>Loading...</p>;
-    if (error) {
-        alert('Erro ao recuperar dados do servidor. Verique sua conexão e tente novamente')
-    }
+    const { jobOpeningsRequest } = useJobOpening()
 
-    return (
-        <>
-            <Button onClick={handleCreateJobOpeningClick} >
-                Criar anúncio de vaga
-            </Button>
+    useEffect(()=> {
+        async function getJobOpenings(){
+         const jobOpenings = await jobOpeningsRequest()
+         setJobOpenings(jobOpenings)
+       }
+       getJobOpenings()
+     }, [jobOpeningsRequest, history.location.key])
 
-{
-    data.jobOpenings.length > 0 ?
-<JobOpeningsList>
+    const jobOpeningsSection = (jobOpenings: [JobOpening]) => (
+    jobOpenings.length > 0 ?
+        <JobOpeningsList>
                 {
-                    data.jobOpenings.map((jobOpening: any) => (
+                    jobOpenings.map((jobOpening: any) => (
                 <Link key={jobOpening._id} to={`/JobOpeningDetail/${jobOpening._id}`}>
                     <img
                     src={jobOpening.company.logo}
@@ -56,7 +59,22 @@ const JobOpenings: React.FC = () => {
             </JobOpeningsList>
             :
             <h1>Nenhuma vaga encontrada</h1>
-}
+)
+
+    return (
+        <>
+            {
+                jobOpenings ? 
+                    <>
+                        <Button onClick={handleCreateJobOpeningClick} >
+                            Criar anúncio de vaga
+                        </Button>
+                        {
+                            jobOpeningsSection(jobOpenings)
+                        }
+                    </>
+                : <p>Loading...</p>
+            }
         </>
     )
 }
