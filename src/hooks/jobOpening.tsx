@@ -10,7 +10,7 @@ import { useCompany } from './company'
 interface JobOpeningContextData {
     jobOpeningsRequest(): Promise<[JobOpening]>
     jobOpeningRequest(id: string): Promise<JobOpening>
-    updateJobOpeningRequest(id: string, data: JobOpening): void
+    updateJobOpeningRequest(jobOpeningId: string, companyId: string, data: JobOpening): void
     createJobOpeningRequest(data: JobOpening): void
     deleteJobOpeningRequest(data: JobOpening): void
 }
@@ -41,18 +41,16 @@ export const JobOpeningProvider: React.FC = ({children}) => {
     
     const { data } = await apolloClient.query({
       query: JOB_OPENING,
-      variables: { id }
+      variables: { id }, 
+      fetchPolicy: 'no-cache'
     });
 
     const jobOpening = data ? data.jobOpening : null;
     return jobOpening
   }, [apolloClient])
     
-  const updateJobOpening = useCallback((id: string, data: JobOpening)=> {
-    const companyId = data.company._id
-    delete data.company._id
-
-    updateCompanyRequest(companyId!, data.company)
+  const updateJobOpening = useCallback((jobOpeningId: string, companyId: string, data: JobOpening)=> {
+    updateCompanyRequest(companyId, data.company)
 
     const formattedData = {
       ...data,
@@ -60,7 +58,7 @@ export const JobOpeningProvider: React.FC = ({children}) => {
     }
 
     const [updateJobOpeningMutation] = updateJobOpeningRequest
-    updateJobOpeningMutation({variables: {id, data: formattedData}})
+    updateJobOpeningMutation({variables: {id: jobOpeningId, data: formattedData}})
   }, [updateCompanyRequest, updateJobOpeningRequest])
   
   const createJobOpening = useCallback(async (data: JobOpening)=> {
