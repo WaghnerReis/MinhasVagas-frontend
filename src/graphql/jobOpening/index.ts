@@ -88,3 +88,9 @@ subscription {
   }
 }
 `
+
+export const JOB_OPENING_DELETED = gql` 
+subscription{
+ jobOpeningDeleted
+}
+`
